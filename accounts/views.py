@@ -12,6 +12,7 @@ from decimal import Decimal
 from django.contrib import messages
 from django.http import HttpResponse
 import random
+import csv
 
 def home(request):
     if request.user.is_authenticated:
@@ -121,3 +122,24 @@ def withdraw(request, account_id):
         return redirect('dashboard')  # Redirect to the dashboard after withdrawal
 
     return render(request, 'accounts/withdraw.html', {'account': account})
+
+def download_all_accounts_data(request):
+    # Retrieve all accounts for the logged-in user
+    accounts = BankAccount.objects.filter(user=request.user)
+    
+    # Set up the CSV response with a filename based on the user's name
+    filename = f"{request.user}_accounts_data.csv"
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    # Initialize the CSV writer
+    writer = csv.writer(response)
+
+    # Write the header row - adjust fields based on your model
+    writer.writerow(['Account Number', ' Balance'])
+
+    # Write each account's data as a row in the CSV
+    for account in accounts:
+        writer.writerow([account.account_number, ' $' + str(account.balance)])
+
+    return response

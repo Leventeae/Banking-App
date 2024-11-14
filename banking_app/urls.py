@@ -10,6 +10,7 @@ urlpatterns = [
     path('accounts/deposit/<int:account_id>/', views.deposit, name='deposit'),
     path('accounts/withdraw/<int:account_id>/', views.withdraw, name='withdraw'),
     path('accounts/login/', views.login, name='login'),
+    path('accounts/download/', views.download_all_accounts_data, name='download_all_accounts_data'),
     path('', views.home, name='home'),
     #path('accounts/logout/', views.logout, name='logout'),
 ]
