@@ -1,0 +1,72 @@
+<!-- accounts/templates/accounts/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'accounts/index.css' %}">
+</head>
+<body>
+    <button id="dark-mode-toggle">Toggle Dark Mode</button>
+    <div class="container flex-center">
+        <h1>Welcome to your Dashboard, {{ user.username }}!</h1>
+        <p>Here you can manage your bank accounts and transactions.</p>
+    
+        <!-- Button to create a new bank account -->
+        <form action="{% url 'create_account' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Make an Account</button>
+        </form>
+    
+        <h2>Your Bank Accounts:</h2>
+        <ul>
+            {% for account in bank_accounts %}
+                <li>
+                    <a href="{% url 'deposit' account.id %}">Deposit</a> | 
+                    <a href="{% url 'withdraw' account.id %}">Withdraw</a> | 
+                    Account Number: {{ account.account_number }} |
+                    Balance: ${{ account.balance }}
+                </li>
+            {% empty %}
+                <li>You don't have any bank accounts yet.</li>
+            {% endfor %}
+        </ul>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+        
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="message {{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <script>
+        // Get the button and the body element
+        const toggleButton = document.getElementById('dark-mode-toggle');
+        const body = document.body;
+
+        // Check if dark mode is already enabled in localStorage
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+        }
+
+        // Toggle dark mode when button is clicked
+        toggleButton.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            // Save the preference to localStorage
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!-- accounts/templates/accounts/deposit.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Deposit</title>
+    <link rel="stylesheet" href="{% static 'accounts/index.css' %}">
+</head>
+<body>
+    <button id="dark-mode-toggle">Toggle Dark Mode</button>
+    <div class="container flex-center">
+        <h1>Deposit to Account {{ account.account_number }}</h1>
+
+        <form action="{% url 'deposit' account.id %}" method="post">
+            {% csrf_token %}
+            <label for="amount">Amount to deposit:</label>
+            <input type="number" name="amount" min="1" id="amount" required>
+            <button type="submit">Deposit</button>
+        </form>
+    
+        <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+    
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="message {{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <script>
+        // Get the button and the body element
+        const toggleButton = document.getElementById('dark-mode-toggle');
+        const body = document.body;
+
+        // Check if dark mode is already enabled in localStorage
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+        }
+
+        // Toggle dark mode when button is clicked
+        toggleButton.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            // Save the preference to localStorage
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+    </script>
+</body>
+</html>
